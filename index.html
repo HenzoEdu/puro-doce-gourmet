@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <title>Puro Doce Gourmet</title>
+  <meta name="theme-color" content="#5b1f12" />
+  <meta name="description" content="Sistema offline de estoque, vendas e financeiro da Puro Doce Gourmet" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Puro Doce" />
+  <meta name="format-detection" content="telephone=no" />
+  <link rel="manifest" href="./manifest.json?v=10.2.0" />
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png?v=10.2.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png?v=10.2.0" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icon-512.png?v=10.2.0" />
+  <link rel="stylesheet" href="./style.css?v=10.2.0" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero-header">
+      <div class="hero-brand">
+        <img src="./assets/logo.png?v=10.2.0" alt="Logo Puro Doce Gourmet" class="brand-logo" />
+        <div class="brand-text">
+          <h1>Puro Doce Gourmet</h1>
+          <p>V8 offline-first • estoque, vendas e caixa</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button id="btnExportarBackup" class="btn btn-secondary" type="button">Exportar backup</button>
+        <button id="btnImportarBackup" class="btn btn-secondary" type="button">Importar backup</button>
+        <button id="btnResetarTudo" class="btn btn-danger" type="button">Resetar tudo</button>
+        <input id="inputImportarBackup" type="file" accept="application/json" hidden />
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="card brand-banner">
+        <div class="brand-banner-content">
+          <img src="./assets/logo.png?v=10.2.0" alt="Logo da marca" class="brand-banner-logo" />
+          <div>
+            <h2>Sistema profissional offline</h2>
+            <p>
+              Funciona sem backend, guarda dados no aparelho, evita tela preta no iPhone
+              e já está preparado para evolução futura com sincronização em nuvem.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="card dashboard-card">
+        <div class="section-header">
+          <h2>Dashboard</h2>
+          <span class="badge" id="versaoBadge">V8.2</span>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="stat-card">
+            <span class="stat-label">Saldo total</span>
+            <strong id="dashSaldoTotal">R$ 0,00</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">PIX</span>
+            <strong id="dashPix">R$ 0,00</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Dinheiro</span>
+            <strong id="dashDinheiro">R$ 0,00</strong>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Estoque total</span>
+            <strong id="dashEstoqueTotal">0</strong>
+          </div>
+        </div>
+
+        <div class="dashboard-grid compact-grid">
+          <div class="stat-card small">
+            <span class="stat-label">Vendas do dia</span>
+            <strong id="dashVendasHoje">0</strong>
+          </div>
+          <div class="stat-card small">
+            <span class="stat-label">Entrada do dia</span>
+            <strong id="dashEntradaHoje">R$ 0,00</strong>
+          </div>
+          <div class="stat-card small">
+            <span class="stat-label">Saída do dia</span>
+            <strong id="dashSaidaHoje">R$ 0,00</strong>
+          </div>
+          <div class="stat-card small">
+            <span class="stat-label">Resultado do dia</span>
+            <strong id="dashResultadoHoje">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <div class="stock-summary">
+          <div class="mini-stat">
+            <span>Ninho</span>
+            <strong id="stockNinho">0</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Tradicional</span>
+            <strong id="stockTradicional">0</strong>
+          </div>
+          <div class="mini-stat">
+            <span>Misto</span>
+            <strong id="stockMisto">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2>Estoque</h2>
+        </div>
+
+        <form id="formEstoque" class="grid-form" novalidate>
+          <div class="field">
+            <label for="estoqueSabor">Sabor</label>
+            <select id="estoqueSabor" required>
+              <option value="">Selecione</option>
+              <option value="ninho">Ninho</option>
+              <option value="tradicional">Tradicional</option>
+              <option value="misto">Misto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="estoqueQuantidade">Quantidade de caixas</label>
+            <input id="estoqueQuantidade" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 10" required />
+          </div>
+
+          <div class="field full-width">
+            <label for="estoqueObservacao">Observação</label>
+            <input id="estoqueObservacao" type="text" maxlength="80" placeholder="Ex: produção da manhã" />
+          </div>
+
+          <div class="actions-row full-width">
+            <button type="submit" class="btn">Adicionar ao estoque</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2>Registrar venda</h2>
+        </div>
+
+        <form id="formVenda" class="grid-form" novalidate>
+          <div class="field">
+            <label for="vendaSabor">Tipo de caixa</label>
+            <select id="vendaSabor" required>
+              <option value="">Selecione</option>
+              <option value="ninho">Ninho</option>
+              <option value="tradicional">Tradicional</option>
+              <option value="misto">Misto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="vendaQuantidade">Quantidade</label>
+            <input id="vendaQuantidade" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex: 2" required />
+          </div>
+
+          <div class="field">
+            <label for="vendaPagamento">Pagamento</label>
+            <select id="vendaPagamento" required>
+              <option value="">Selecione</option>
+              <option value="pix">PIX</option>
+              <option value="dinheiro">Dinheiro</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="vendaValor">Valor calculado</label>
+            <input id="vendaValor" type="text" readonly placeholder="R$ 0,00" />
+          </div>
+
+          <div class="hint full-width">
+            Regra: 1 caixa = R$ 8,00 • 2 ou mais = R$ 7,50 por caixa
+          </div>
+
+          <div class="actions-row full-width">
+            <button type="submit" class="btn">Finalizar venda</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="section-header">
+          <h2>Financeiro</h2>
+        </div>
+
+        <div class="finance-grid">
+          <form id="formGasto" class="subcard" novalidate>
+            <h3>Adicionar gasto</h3>
+            <div class="field">
+              <label for="gastoNome">Descrição</label>
+              <input id="gastoNome" type="text" maxlength="80" placeholder="Ex: Embalagens" required />
+            </div>
+
+            <div class="field">
+              <label for="gastoValor">Valor</label>
+              <input id="gastoValor" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Ex: 25.90" required />
+            </div>
+
+            <div class="field">
+              <label for="gastoPagamento">Forma de pagamento do gasto</label>
+              <select id="gastoPagamento" required>
+                <option value="">Selecione</option>
+                <option value="pix">PIX</option>
+                <option value="dinheiro">Dinheiro</option>
+              </select>
+            </div>
+
+            <div class="actions-row">
+              <button type="submit" class="btn btn-danger">Registrar gasto</button>
+            </div>
+          </form>
+
+          <form id="formEntradaManual" class="subcard" novalidate>
+            <h3>Entrada manual</h3>
+            <div class="field">
+              <label for="entradaDescricao">Descrição</label>
+              <input id="entradaDescricao" type="text" maxlength="80" placeholder="Ex: Troco inicial" required />
+            </div>
+
+            <div class="field">
+              <label for="entradaValor">Valor</label>
+              <input id="entradaValor" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Ex: 50.00" required />
+            </div>
+
+            <div class="field">
+              <label for="entradaTipo">Adicionar em</label>
+              <select id="entradaTipo" required>
+                <option value="">Selecione</option>
+                <option value="pix">PIX</option>
+                <option value="dinheiro">Dinheiro</option>
+              </select>
+            </div>
+
+            <div class="actions-row">
+              <button type="submit" class="btn btn-success">Adicionar entrada</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-header wrap">
+          <h2>Históricos</h2>
+          <div class="header-actions">
+            <select id="filtroHistorico" aria-label="Filtrar histórico">
+              <option value="todos">Mostrar tudo</option>
+              <option value="hoje">Somente hoje</option>
+            </select>
+            <button id="btnLimparHistoricos" class="btn btn-secondary" type="button">Limpar históricos</button>
+          </div>
+        </div>
+
+        <div class="history-tabs">
+          <button class="tab-btn active" data-tab="estoque" type="button">Estoque</button>
+          <button class="tab-btn" data-tab="vendas" type="button">Vendas</button>
+          <button class="tab-btn" data-tab="financeiro" type="button">Financeiro</button>
+        </div>
+
+        <div id="tabEstoque" class="tab-panel active">
+          <ul id="listaHistoricoEstoque" class="history-list"></ul>
+        </div>
+
+        <div id="tabVendas" class="tab-panel">
+          <ul id="listaHistoricoVendas" class="history-list"></ul>
+        </div>
+
+        <div id="tabFinanceiro" class="tab-panel">
+          <ul id="listaHistoricoFinanceiro" class="history-list"></ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+
+  <script src="./app.js?v=10.2.0"></script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./service-worker.js?v=10").catch(function (error) {
+          console.error("Erro ao registrar service worker:", error);
+        });
+      });
+    }
+  </script>
+
+</body>
+</html>
